@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/01BluetoothClassic_Android_Arduino" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/02BLE_MVVM" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/03SimpleBLE" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/04AndroidBleMVVMService" vcs="Git" />
+  </component>
+</project>
