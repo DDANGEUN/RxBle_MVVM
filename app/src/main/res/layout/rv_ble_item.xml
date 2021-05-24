@@ -5,14 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="60dp"
     android:orientation="horizontal"
-    android:background="@drawable/round_background_color3"
-    tools:ignore="MissingDefaultResource">
+    android:background="@drawable/round_background_item"
+    tools:ignore="MissingDefaultResource"
+    android:elevation="5dp">
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="7"
         android:orientation="vertical">
         <TextView
+            android:fontFamily="@font/rubik"
             android:layout_marginStart="10dp"
             android:id="@+id/ble_name"
             android:layout_width="match_parent"
@@ -22,6 +24,7 @@
             android:textSize="22sp"
             android:text="name"/>
         <TextView
+            android:fontFamily="@font/rubik"
             android:layout_marginStart="10dp"
             android:layout_marginBottom="10dp"
             android:id="@+id/ble_address"
@@ -29,7 +32,7 @@
             android:layout_weight="1"
             android:layout_height="0dp"
             android:text="12:13:13:5a:ee"
-            android:textColor="@color/lilly_color4"/>
+            android:textColor="@color/lily_gray_2"/>
     </LinearLayout>
 
 

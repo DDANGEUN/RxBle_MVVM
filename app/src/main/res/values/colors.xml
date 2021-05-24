@@ -8,8 +8,12 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="lilly_color1">#F08FA9</color>
-    <color name="lilly_color2">#5fafdd</color>
-    <color name="lilly_color3">#cccccc</color>
-    <color name="lilly_color4">#848484</color>
+    <color name="lily_pink_1">#fedbd0</color>
+    <color name="lily_pink_2">#f7b6b7</color>
+    <color name="lily_pink_3">#faa398</color>
+    <color name="lily_pink_4">#fa98aa</color>
+    <color name="lily_skyblue">#5fafdd</color>
+    <color name="lily_gray_1">#cccccc</color>
+    <color name="lily_gray_2">#848484</color>
+    <color name="lily_pink_typo">#442c2e</color>
 </resources>

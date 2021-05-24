@@ -2,15 +2,39 @@
     <!-- Base application theme. -->
     <style name="Theme.06RxAndroidBle_MVVM" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/lilly_color2</item>
-        <item name="colorPrimaryVariant">@color/lilly_color2</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimary">@color/lily_pink_1</item>
+        <item name="colorPrimaryVariant">@color/lily_pink_2</item>
+        <item name="colorOnPrimary">@color/lily_pink_typo</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
+        <item name="colorSecondary">@color/lily_pink_3</item>
+        <item name="colorSecondaryVariant">@color/lily_pink_4</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+
         <!-- Customize your theme here. -->
+        <item name="android:fontFamily">@font/rubik</item>
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Shrine.SmallComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Shrine.MediumComponent</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Shrine.LargeComponent</item>
+        <item name="textInputStyle">@style/Widget.Shrine.TextInputLayout</item>
     </style>
+
+
+    <style name="ShapeAppearance.Shrine.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">4dp</item>
+    </style>
+
+    <style name="ShapeAppearance.Shrine.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
+    <style name="ShapeAppearance.Shrine.LargeComponent" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">24dp</item>
+    </style>
+
+    <style name="Widget.Shrine.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox"/>
 </resources>

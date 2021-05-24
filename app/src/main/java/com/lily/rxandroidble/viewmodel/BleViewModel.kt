@@ -26,10 +26,8 @@ import com.polidea.rxandroidble2.scan.ScanSettings
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.launch
 import java.nio.charset.Charset
-import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.concurrent.schedule
-import kotlin.experimental.and
 
 
 class BleViewModel(private val repository: BleRepository) : ViewModel() {
@@ -110,7 +108,7 @@ class BleViewModel(private val repository: BleRepository) : ViewModel() {
 
         isScanning.set(true)
 
-        Timer("SettingUp", false).schedule(3000) { stopScan() }
+        Timer("SettingUp", false).schedule(4000) { stopScan() }
 
     }
 
@@ -161,11 +159,7 @@ class BleViewModel(private val repository: BleRepository) : ViewModel() {
 
         mConnectSubscription = repository.bleConnectObservable(device)
     }
-    private fun byteArrayToHex(a: ByteArray): String {
-        val sb = StringBuilder()
-        for (b in a) sb.append(String.format("%02x", b /*&0xff*/))
-        return sb.toString()
-    }
+
 
     private fun connectionStateListener(
         device: RxBleDevice,
@@ -226,15 +220,12 @@ class BleViewModel(private val repository: BleRepository) : ViewModel() {
         }
         return data
     }
-    private val HEX_ARRAY = "0123456789ABCDEF".toCharArray()
-    fun bytesToHex(bytes: ByteArray): String {
-        val hexChars = CharArray(bytes.size * 2)
-        for (j in bytes.indices) {
-            val v: Byte = bytes[j] and 0xFF.toByte()
-            hexChars[j * 2] = HEX_ARRAY[v.toInt() ushr 4]
-            hexChars[j * 2 + 1] = HEX_ARRAY[v.toInt() and 0x0F]
-        }
-        return String(hexChars)
+
+
+    fun byteArrayToHex(a: ByteArray): String {
+        val sb = java.lang.StringBuilder(a.size * 2)
+        for (b in a) sb.append(String.format("%02x", b))
+        return sb.toString()
     }
 
     fun writeData(data: String, type: String) {
@@ -255,7 +246,7 @@ class BleViewModel(private val repository: BleRepository) : ViewModel() {
         if (sendByteData != null) {
             mWriteSubscription = repository.writeData(sendByteData)?.subscribe({ writeBytes ->
                 // Written data.
-                val str: String = bytesToHex(writeBytes)
+                val str: String = byteArrayToHex(writeBytes)
                 Log.d("writtenBytes", str)
                 viewModelScope.launch{
                     Util.showNotification("`$str` is written.")
