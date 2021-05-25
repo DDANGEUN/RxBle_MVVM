@@ -8,9 +8,10 @@ RxBle + MVVM
 ## Info
 
  *This code is Bluetooth LE MVVM code using RxBle.*  
-- [**RxBle**](https://github.com/Polidea/RxAndroidBle)
-- Theme Ref : https://material.io/design/material-studies/shrine.html#components
-
+- **Using**
+  - [**RxBle**](https://github.com/Polidea/RxAndroidBle)
+  - [Koin](https://github.com/InsertKoinIO/koin)
+  - Theme Ref : https://material.io/design/material-studies/shrine.html#components
 
 　  
 - If you want to see your ble device like this code preview, ***modify UUID*** in **Constants.kt**  
