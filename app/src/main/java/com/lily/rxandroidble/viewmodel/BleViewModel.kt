@@ -157,6 +157,7 @@ class BleViewModel(private val repository: BleRepository) : ViewModel() {
                 throwable.printStackTrace()
             }
 
+        // connect
         mConnectSubscription = repository.bleConnectObservable(device)
     }
 
@@ -189,6 +190,7 @@ class BleViewModel(private val repository: BleRepository) : ViewModel() {
     }
 
 
+    // notify toggle
     fun onClickRead() {
         if(!isRead) {
             mNotificationSubscription = repository.bleNotification()
@@ -209,25 +211,9 @@ class BleViewModel(private val repository: BleRepository) : ViewModel() {
         }
 
     }
-    private fun hexStringToByteArray(s: String): ByteArray {
-        val len = s.length
-        val data = ByteArray(len / 2)
-        var i = 0
-        while (i < len) {
-            data[i / 2] = ((Character.digit(s[i], 16) shl 4)
-                    + Character.digit(s[i + 1], 16)).toByte()
-            i += 2
-        }
-        return data
-    }
 
 
-    fun byteArrayToHex(a: ByteArray): String {
-        val sb = java.lang.StringBuilder(a.size * 2)
-        for (b in a) sb.append(String.format("%02x", b))
-        return sb.toString()
-    }
-
+    // write
     fun writeData(data: String, type: String) {
 
         var sendByteData: ByteArray? = null
@@ -258,6 +244,25 @@ class BleViewModel(private val repository: BleRepository) : ViewModel() {
         }
 
 
+    }
+
+    private fun hexStringToByteArray(s: String): ByteArray {
+        val len = s.length
+        val data = ByteArray(len / 2)
+        var i = 0
+        while (i < len) {
+            data[i / 2] = ((Character.digit(s[i], 16) shl 4)
+                    + Character.digit(s[i + 1], 16)).toByte()
+            i += 2
+        }
+        return data
+    }
+
+
+    private fun byteArrayToHex(a: ByteArray): String {
+        val sb = java.lang.StringBuilder(a.size * 2)
+        for (b in a) sb.append(String.format("%02x", b))
+        return sb.toString()
     }
 
     override fun onCleared() {

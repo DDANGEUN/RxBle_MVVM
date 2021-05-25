@@ -12,9 +12,7 @@ import java.util.*
 
 class BleRepository {
 
-    private val TAG = "MyRepository"
 
-    val rxBleClient = RxBleClient.create(MyApplication.applicationContext())
 
     var rxBleConnection: RxBleConnection? = null
     var rxBleDeviceServices: RxBleDeviceServices? = null
