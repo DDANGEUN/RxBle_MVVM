@@ -1,5 +1,5 @@
 # RxBle_MVVM
-RxBle + MVVM
+RxBle + MVVM Example
 
 
 
