@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    android:padding="10dp"
     android:layout_gravity="center"
     android:background="@drawable/round_background_white"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="350dp"
-    android:layout_height="260dp">
+    android:layout_height="300dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,31 +16,40 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:textColor="#000"
             android:layout_margin="5dp"
             android:text="Write Value"
+            android:textSize="17sp"
             android:textStyle="bold"
-            android:layout_weight="0.6"/>
-        <EditText
-            android:id="@+id/text_write"
-            android:layout_margin="10dp"
+            android:layout_weight="1"/>
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1.5"/>
+            android:layout_weight="2"
+            android:hint="bytes to send">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:textSize="13sp"
+                android:id="@+id/text_write"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1.5"
             android:orientation="horizontal">
             <TextView
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Type"
+                android:textSize="17sp"
                 android:layout_gravity="center"
-                android:layout_margin="10dp"
-                android:textColor="@color/black"/>
+                android:layout_margin="10dp"/>
             <RadioGroup
-                android:layout_marginStart="10dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="0dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">

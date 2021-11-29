@@ -67,6 +67,11 @@ class MainActivity : AppCompatActivity() {
 
         initObserver(binding)
 
+        if (!hasPermissions(this, PERMISSIONS)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(PERMISSIONS, REQUEST_ALL_PERMISSION)
+            }
+        }
 
     }
 

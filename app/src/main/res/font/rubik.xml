@@ -31,5 +31,30 @@
         app:fontStyle="normal"
         app:fontWeight="1000" />
 
+    <!-- italic -->
+    <font
+        android:font="@font/rubik_lightitalic"
+        android:fontStyle="italic"
+        android:fontWeight="300"
+        app:font="@font/rubik_lightitalic"
+        app:fontStyle="italic"
+        app:fontWeight="300" />
+    <font
+        android:font="@font/rubik_italic"
+        android:fontStyle="italic"
+        android:fontWeight="400"
+        app:font="@font/rubik_italic"
+        app:fontStyle="italic"
+        app:fontWeight="400" />
+    <font
+        android:font="@font/rubik_mediumitalic"
+        android:fontStyle="italic"
+        android:fontWeight="1000"
+        app:font="@font/rubik_mediumitalic"
+        app:fontStyle="italic"
+        app:fontWeight="1000" />
+
+
+
 
 </font-family>
