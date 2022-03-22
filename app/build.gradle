@@ -70,7 +70,7 @@ dependencies {
     // for new API replaced startActivityForResult
     implementation 'androidx.fragment:fragment-ktx:1.4.0'
 
-    // Rxble
+    // RxBle
     implementation "com.polidea.rxandroidble2:rxandroidble:1.12.1"
     // RxJava
     implementation "io.reactivex.rxjava2:rxkotlin:2.4.0"

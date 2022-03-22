@@ -71,7 +71,7 @@
                     android:layout_weight="1"
                     android:background="@drawable/button_back2"
                     android:enabled="@{viewModel.isConnect?true:false}"
-                    android:onClick="@{()->viewModel.onClickRead()}"
+                    android:onClick="@{()->viewModel.onClickNotify()}"
                     android:text="Notify\nToggle"
                     android:textColor="@color/white"
                     android:textSize="13sp"

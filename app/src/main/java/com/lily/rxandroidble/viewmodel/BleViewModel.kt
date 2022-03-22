@@ -33,7 +33,6 @@ import kotlin.concurrent.schedule
 class BleViewModel(private val repository: BleRepository) : ViewModel() {
 
     private lateinit var mScanSubscription: Disposable
-    private var mConnectSubscription: Disposable? = null
     private var mNotificationSubscription: Disposable? = null
     private var mWriteSubscription: Disposable? = null
     private lateinit var connectionStateDisposable: Disposable
@@ -52,9 +51,9 @@ class BleViewModel(private val repository: BleRepository) : ViewModel() {
     var isRead = false
 
 
-    private val _requestEnableBLE = MutableLiveData<Event<Int>>()
-    val requestEnableBLE: LiveData<Event<Int>>
-        get() = _requestEnableBLE
+    private val _bleException = MutableLiveData<Event<Int>>()
+    val bleException: LiveData<Event<Int>>
+        get() = _bleException
 
     private val _listUpdate = MutableLiveData<Event<ArrayList<ScanResult>?>>()
     val listUpdate: LiveData<Event<ArrayList<ScanResult>?>>
@@ -76,7 +75,7 @@ class BleViewModel(private val repository: BleRepository) : ViewModel() {
         startScan()
     }
 
-    private fun startScan() {
+    fun startScan() {
         scanVisible.set(true)
         //scan filter
         val scanFilter: ScanFilter = ScanFilter.Builder()
@@ -98,7 +97,7 @@ class BleViewModel(private val repository: BleRepository) : ViewModel() {
                 addScanResult(scanResult)
             }, { throwable ->
                 if (throwable is BleScanException) {
-                    _requestEnableBLE.postValue(Event(throwable.reason))
+                    _bleException.postValue(Event(throwable.reason))
                 } else {
                     Util.showNotification("UNKNOWN ERROR")
                 }
@@ -141,7 +140,7 @@ class BleViewModel(private val repository: BleRepository) : ViewModel() {
 
 
     fun onClickDisconnect() {
-        mConnectSubscription?.dispose()
+        repository.disconnectDevice()
     }
 
 
@@ -158,7 +157,7 @@ class BleViewModel(private val repository: BleRepository) : ViewModel() {
             }
 
         // connect
-        mConnectSubscription = repository.bleConnectObservable(device)
+        repository.connectDevice(device)
     }
 
 
@@ -191,7 +190,7 @@ class BleViewModel(private val repository: BleRepository) : ViewModel() {
 
 
     // notify toggle
-    fun onClickRead() {
+    fun onClickNotify() {
         if(!isRead) {
             mNotificationSubscription = repository.bleNotification()
                 ?.subscribe({ bytes ->
@@ -202,7 +201,7 @@ class BleViewModel(private val repository: BleRepository) : ViewModel() {
                 }, { throwable ->
                     // Handle an error here
                     throwable.printStackTrace()
-                    mConnectSubscription?.dispose()
+                    repository.disconnectDevice()
                     isRead = false
                 })
         }else{
@@ -265,10 +264,11 @@ class BleViewModel(private val repository: BleRepository) : ViewModel() {
         return sb.toString()
     }
 
+
     override fun onCleared() {
         super.onCleared()
         mScanSubscription.dispose()
-        mConnectSubscription?.dispose()
+        repository.disconnectDevice()
         mWriteSubscription?.dispose()
         connectionStateDisposable.dispose()
     }

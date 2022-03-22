@@ -1,44 +1,37 @@
 package com.lily.rxandroidble
 
-
-import android.bluetooth.BluetoothGattService
-import com.polidea.rxandroidble2.RxBleClient
 import com.polidea.rxandroidble2.RxBleConnection
 import com.polidea.rxandroidble2.RxBleDevice
-import com.polidea.rxandroidble2.RxBleDeviceServices
 import io.reactivex.disposables.Disposable
 import java.util.*
 
 
 class BleRepository {
 
-
-
     var rxBleConnection: RxBleConnection? = null
-    var rxBleDeviceServices: RxBleDeviceServices? = null
-    var bleGattServices: List<BluetoothGattService>? = null
+    private var mConnectSubscription: Disposable? = null
 
     /**
      * Connect & Discover Services
-     * @Saved rxBleConnection, rxBleDeviceServices, bleGattServices
+     * @Saved rxBleConnection
      */
-    fun bleConnectObservable(device: RxBleDevice): Disposable =
-        device.establishConnection(false) // <-- autoConnect flag
-            .subscribe({ _rxBleConnection->
+    fun connectDevice(device: RxBleDevice){
+        mConnectSubscription = device.establishConnection(false) // <-- autoConnect flag
+            .flatMapSingle{ _rxBleConnection->
                 // All GATT operations are done through the rxBleConnection.
                 rxBleConnection = _rxBleConnection
-
                 // Discover services
-                _rxBleConnection.discoverServices().subscribe ({ _rxBleDeviceServices ->
-                    rxBleDeviceServices = _rxBleDeviceServices
-                    bleGattServices = _rxBleDeviceServices.bluetoothGattServices
-                },{ discoverServicesThrowable->
-                    discoverServicesThrowable.printStackTrace()
-                })
+                _rxBleConnection.discoverServices()
+            }.subscribe({
+                // Services
+            },{
 
-            },{ connectionThrowable->
-                connectionThrowable.printStackTrace()
             })
+    }
+    fun disconnectDevice(){
+        mConnectSubscription?.dispose()
+    }
+
 
 
     /**
@@ -50,6 +43,12 @@ class BleRepository {
             // Notification has been set up
         }
         ?.flatMap { notificationObservable -> notificationObservable }
+
+    /**
+     * Read
+     */
+    fun bleRead() =
+        rxBleConnection?.readCharacteristic(UUID.fromString(CHARACTERISTIC_RESPONSE_STRING))
 
 
     /**

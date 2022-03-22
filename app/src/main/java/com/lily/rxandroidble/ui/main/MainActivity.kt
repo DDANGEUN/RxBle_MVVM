@@ -1,5 +1,6 @@
 package com.lily.rxandroidble.ui.main
 
+import android.Manifest
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
@@ -16,12 +17,9 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.lily.rxandroidble.PERMISSIONS
 import com.lily.rxandroidble.R
-import com.lily.rxandroidble.REQUEST_ALL_PERMISSION
 import com.lily.rxandroidble.databinding.ActivityMainBinding
 import com.lily.rxandroidble.ui.adapter.BleListAdapter
 import com.lily.rxandroidble.ui.dialog.WriteDialog
@@ -38,6 +36,13 @@ class MainActivity : AppCompatActivity() {
 
     private var requestEnableBluetooth = false
     private var askGrant = false
+
+    companion object {
+        const val REQUEST_LOCATION_PERMISSION = 1
+        val LOCATION_PERMISSION = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,48 +72,18 @@ class MainActivity : AppCompatActivity() {
 
         initObserver(binding)
 
-        if (!hasPermissions(this, PERMISSIONS)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(PERMISSIONS, REQUEST_ALL_PERMISSION)
-            }
+        if (!hasPermissions(this, LOCATION_PERMISSION)) {
+            requestPermissions(LOCATION_PERMISSION, REQUEST_LOCATION_PERMISSION)
         }
 
     }
 
     private fun initObserver(binding: ActivityMainBinding){
         viewModel.apply {
-            requestEnableBLE.observe(this@MainActivity, Observer {
+            bleException.observe(this@MainActivity, Observer {
                 it.getContentIfNotHandled()?.let { reason ->
                     viewModel.stopScan()
-                    when (reason) {
-                        BleScanException.BLUETOOTH_CANNOT_START -> Util.showNotification("BLUETOOTH CANNOT START")
-                        BleScanException.BLUETOOTH_DISABLED -> {
-                            requestEnableBluetooth = true
-                            requestEnableBLE()
-                        }
-                        BleScanException.BLUETOOTH_NOT_AVAILABLE -> Util.showNotification("블루투스 지원하지 않는 기기입니다.")
-                        BleScanException.LOCATION_PERMISSION_MISSING, BleScanException.LOCATION_SERVICES_DISABLED -> {
-
-                            if (!askGrant) {
-                                askGrant = true
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    requestPermissions(PERMISSIONS, REQUEST_ALL_PERMISSION)
-                                }
-                            }
-
-                        }
-                        BleScanException.SCAN_FAILED_ALREADY_STARTED -> Util.showNotification("SCAN FAILED ALREADY STARTED")
-                        BleScanException.SCAN_FAILED_APPLICATION_REGISTRATION_FAILED -> Util.showNotification(
-                            "SCAN FAILED APPLICATION REGISTRATION FAILED"
-                        )
-                        BleScanException.SCAN_FAILED_INTERNAL_ERROR -> Util.showNotification("SCAN FAILED INTERNAL ERROR")
-                        BleScanException.SCAN_FAILED_FEATURE_UNSUPPORTED -> Util.showNotification("SCAN FAILED FEATURE UNSUPPORTED")
-                        BleScanException.SCAN_FAILED_OUT_OF_HARDWARE_RESOURCES -> Util.showNotification(
-                            "SCAN FAILED OUT OF HARDWARE RESOURCES"
-                        )
-                        BleScanException.UNDOCUMENTED_SCAN_THROTTLE -> Util.showNotification("UNDOCUMENTED SCAN THROTTLE")
-                        else -> Util.showNotification("UNKNOWN ERROR CODE")
-                    }
+                    bleThrowable(reason)
                 }
             })
 
@@ -129,9 +104,35 @@ class MainActivity : AppCompatActivity() {
             })
         }
 
+    }
+    private fun bleThrowable(reason: Int) = when (reason) {
+        BleScanException.BLUETOOTH_DISABLED -> {
+            requestEnableBluetooth = true
+            requestEnableBLE()
+        }
+        BleScanException.LOCATION_PERMISSION_MISSING->{
+            requestPermissions(LOCATION_PERMISSION, REQUEST_LOCATION_PERMISSION)
+        }
+        else -> {
+            Util.showNotification(bleScanExceptionReasonDescription(reason))
+        }
+    }
 
-
-
+    private fun bleScanExceptionReasonDescription(reason: Int): String {
+        return when (reason) {
+            BleScanException.BLUETOOTH_CANNOT_START -> "Bluetooth cannot start"
+            BleScanException.BLUETOOTH_DISABLED -> "Bluetooth disabled"
+            BleScanException.BLUETOOTH_NOT_AVAILABLE -> "Bluetooth not available"
+            BleScanException.LOCATION_SERVICES_DISABLED -> "Location Services disabled"
+            BleScanException.SCAN_FAILED_ALREADY_STARTED -> "Scan failed because it has already started"
+            BleScanException.SCAN_FAILED_APPLICATION_REGISTRATION_FAILED -> "Scan failed because application registration failed"
+            BleScanException.SCAN_FAILED_INTERNAL_ERROR -> "Scan failed because of an internal error"
+            BleScanException.SCAN_FAILED_FEATURE_UNSUPPORTED -> "Scan failed because feature unsupported"
+            BleScanException.SCAN_FAILED_OUT_OF_HARDWARE_RESOURCES -> "Scan failed because out of hardware resources"
+            BleScanException.UNDOCUMENTED_SCAN_THROTTLE -> "Undocumented scan throttle"
+            BleScanException.UNKNOWN_ERROR_CODE -> "Unknown error"
+            else -> "Unknown error"
+        }
     }
     override fun onResume() {
         super.onResume()
@@ -152,14 +153,13 @@ class MainActivity : AppCompatActivity() {
 
 
     private val requestEnableBleResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-
         if (result.resultCode == Activity.RESULT_OK) {
-            val intent = result.data
             Util.showNotification("Bluetooth기능을 허용하였습니다.")
-
+            viewModel.startScan()
         }
         else{
             Util.showNotification("Bluetooth기능을 켜주세요.")
+            viewModel.stopScan()
         }
         requestEnableBluetooth = false
     }
@@ -173,12 +173,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun hasPermissions(context: Context?, permissions: Array<String>): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null) {
-            for (permission in permissions) {
-                if (ActivityCompat.checkSelfPermission(context, permission)
-                    != PackageManager.PERMISSION_GRANTED) {
-                    return false
-                }
+        for (permission in permissions) {
+            if (context?.let { ActivityCompat.checkSelfPermission(it, permission) }
+                != PackageManager.PERMISSION_GRANTED) {
+                return false
             }
         }
         return true
@@ -192,13 +190,13 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            REQUEST_ALL_PERMISSION -> {
+            REQUEST_LOCATION_PERMISSION -> {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "Permissions granted!", Toast.LENGTH_SHORT).show()
                 } else {
-                    requestPermissions(permissions, REQUEST_ALL_PERMISSION)
-                    Toast.makeText(this, "Permissions must be granted", Toast.LENGTH_SHORT).show()
+                    requestPermissions(permissions, REQUEST_LOCATION_PERMISSION)
+                    Toast.makeText(this, "Permissions must be granted!", Toast.LENGTH_SHORT).show()
                     askGrant = false
                 }
             }
