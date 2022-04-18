@@ -38,10 +38,19 @@ class MainActivity : AppCompatActivity() {
     private var askGrant = false
 
     companion object {
-        const val REQUEST_LOCATION_PERMISSION = 1
+        val PERMISSIONS = arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+        val PERMISSIONS_S_ABOVE = arrayOf(
+            Manifest.permission.BLUETOOTH_SCAN,
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
         val LOCATION_PERMISSION = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION
         )
+        val REQUEST_ALL_PERMISSION = 1
+        val REQUEST_LOCATION_PERMISSION = 2
     }
 
 
@@ -69,12 +78,17 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+            if (!hasPermissions(this, PERMISSIONS_S_ABOVE)) {
+                requestPermissions(PERMISSIONS_S_ABOVE, REQUEST_ALL_PERMISSION)
+            }
+        }else{
+            if (!hasPermissions(this, PERMISSIONS)) {
+                requestPermissions(PERMISSIONS, REQUEST_ALL_PERMISSION)
+            }
+        }
 
         initObserver(binding)
-
-        if (!hasPermissions(this, LOCATION_PERMISSION)) {
-            requestPermissions(LOCATION_PERMISSION, REQUEST_LOCATION_PERMISSION)
-        }
 
     }
 
@@ -189,8 +203,8 @@ class MainActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            REQUEST_LOCATION_PERMISSION -> {
+        //when (requestCode) {
+            //REQUEST_LOCATION_PERMISSION -> {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "Permissions granted!", Toast.LENGTH_SHORT).show()
@@ -199,8 +213,8 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Permissions must be granted!", Toast.LENGTH_SHORT).show()
                     askGrant = false
                 }
-            }
-        }
+            //}
+        //}
     }
 
 
